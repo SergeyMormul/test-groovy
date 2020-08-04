@@ -1,0 +1,79 @@
+/*
+ * Copyright (c) 2015 Transparent Language.  All rights reserved.
+ */
+apply plugin: 'groovy'
+
+dependencies {
+    implementation "org.codehaus.groovy:groovy:$groovyVersion:indy"
+}
+
+compileGroovy {
+    groovyOptions.configurationScript = file( "$rootDir/gradle/groovyCompilerConfiguration.groovy" )
+    groovyOptions.optimizationOptions['indy'] = true
+    options*.compilerArgs = ['-Xlint:deprecation', '-encoding', 'UTF-8']
+}
+
+compileTestGroovy {
+    groovyOptions.optimizationOptions['indy'] = true
+    options*.compilerArgs = ['-Xlint:deprecation', '-encoding', 'UTF-8']
+}
+
+sourceCompatibility = '1.11'
+targetCompatibility = '1.11'
+
+ext.sharedManifest = manifest {
+    attributes( 'Implementation-Title': project.name, 'Implementation-Version': project.version )
+}
+
+jar {
+    manifest = project.manifest {
+        from sharedManifest
+    }
+
+    from( buildDir ) {
+        include 'build-info.properties'
+    }
+}
+jar.dependsOn 'createBuildInformationFile'
+
+test {
+    useJUnitPlatform()
+//    useJUnit {
+//        includeCategories 'molde.category.UnitTest'
+//    }
+    testLogging {
+        showStandardStreams = false
+        exceptionFormat = 'full'
+    }
+    reports.html.destination = ( file( "$buildDir/reports/unitTests/index.html" ) )
+}
+
+task sourcesJar( type: Jar, dependsOn: classes ) {
+    archiveClassifier.set( 'sources' )
+    from sourceSets.main.allSource
+    manifest = project.manifest {
+        from sharedManifest
+    }
+}
+
+task testSourcesJar( type: Jar, dependsOn: testClasses ) {
+    archiveClassifier.set( 'test-sources' )
+    from sourceSets.test.allSource
+    manifest = project.manifest {
+        from sharedManifest
+    }
+}
+
+task testBinariesJar( type: Jar, dependsOn: testClasses ) {
+    archiveClassifier.set( 'test' )
+    from sourceSets.test.output
+    manifest = project.manifest {
+        from sharedManifest
+    }
+}
+
+artifacts {
+    archives sourcesJar
+    archives testSourcesJar
+    archives testBinariesJar
+}

@@ -1,0 +1,39 @@
+/*
+ * Copyright (c) 2015 Transparent Language.  All rights reserved.
+ */
+
+description = 'Common Testing.'
+group = 'molde'
+
+apply from: "$rootDir/gradle/repositories.gradle"
+apply from: "$rootDir/gradle/version.gradle"
+apply from: "$rootDir/gradle/groovy.gradle"
+apply from: "$rootDir/gradle/spock.gradle"
+apply from: "$rootDir/gradle/spring.gradle"
+apply from: "$rootDir/gradle/jacoco.gradle"
+//apply from: "$rootDir/gradle/codenarc.gradle"
+apply from: "$rootDir/gradle/maven-publish.gradle"
+
+dependencies {
+//    implementation "org.slf4j:slf4j-api:$slf4jVersion"
+    // https://mvnrepository.com/artifact/org.junit.platform/junit-platform-runner
+//    testImplementation group: 'org.junit.platform', name: 'junit-platform-runner', version: '1.6.2'
+// https://mvnrepository.com/artifact/org.junit.vintage/junit-vintage-engine
+//    testCompile group: 'org.junit.vintage', name: 'junit-vintage-engine', version: '5.6.2'
+// https://mvnrepository.com/artifact/org.junit.jupiter/junit-jupiter
+//    testCompile group: 'org.junit.jupiter', name: 'junit-jupiter', version: '5.6.2'
+
+}
+
+// in case you need to exclude certain classes from code coverage
+ext.coverageExcludes = []
+
+defaultTasks << 'clean'
+defaultTasks << 'build'
+
+if ( publishArtifacts == 'true' && branch == 'master' ) {
+    defaultTasks << 'publish'
+}
+else {
+    defaultTasks << 'publishToMavenLocal'
+}
