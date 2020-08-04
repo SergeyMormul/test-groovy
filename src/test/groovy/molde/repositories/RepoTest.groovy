@@ -5,7 +5,7 @@ import spock.lang.Specification
 
 /**
  */
-class RepoTestSpecification extends BaseTest {
+class RepoTest extends BaseTest {
 
     def 'test'() {
 
